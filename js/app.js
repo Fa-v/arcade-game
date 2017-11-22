@@ -34,7 +34,7 @@ Enemy.prototype.calculateSpeed = function () {
 }
 
 /**
- * @description Update the enemy's position, multiplying the dt parameter by
+ * @description Updates the enemy's position, multiplying the dt parameter by
  * enemy's movement ensure the game runs at the same speed for all computers
  * @param {Number} dt dt, a time delta between ticks
  */
@@ -74,7 +74,16 @@ Player.prototype.getInitialPosition = function() {
     this.y = 400;
 }
 
-Player.prototype.update = function () {}
+/**
+ * @description Updates the player's position, and calls getInitialPosition and
+ * checkCollisions methods
+ */
+Player.prototype.update = function () {
+    if (this.y <= -10) {
+        this.getInitialPosition();
+    }
+    this.checkCollisions();
+}
 
 /**
  * @description Draw the player on the screen
@@ -83,14 +92,58 @@ Player.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+/**
+ * @description Checks if the enemy and the player are on the same coordinates
+ */
+Player.prototype.checkCollisions = function () {
+    allEnemies.forEach(enemy => {
+        let playerOnFirstRow = player.y - 14 === enemy.y;
+        let playerOnSecondRow =  player.y - 16 === enemy.y;
+        let playerOnThirdRow = player.y - 20 === enemy.y;
+        let enemyOnPlayer = enemy.x >= player.x - 40 && enemy.x <= player.x + 40;
+
+       (playerOnFirstRow || playerOnSecondRow || playerOnThirdRow)
+           && enemyOnPlayer
+           && this.getInitialPosition();
+    });
+}
+
+/**
+ * @description Sets values for each key to move the player on the canvas
+ * @param {Object} allowedKeys
+ */
+Player.prototype.handleInput = function (allowedKeys) {
+    switch (allowedKeys) {
+        case 'left':
+            this.x <= 10 ? this.x = 0 : this.x -= 100;
+            break;
+        case 'up':
+            this.y <= 50 ? this.y = -10 : this.y -= 80;
+            break;
+        case 'right':
+            this.x >= 400 ? this.x = 400 : this.x += 100;
+            break;
+        case 'down':
+            this.y >= 400 ? this.y = 400 : this.y += 80;
+            break;
+    }
+}
+
+/**
+ * @description Listens for key presses and sends the keys to the
+ * Player.handleInput() method.
+ * @param {Object} event
+ */
 document.addEventListener('keyup', function (e) {
     var allowedKeys = {
         37: 'left',
+        65:'left',
         38: 'up',
+        87: 'up',
         39: 'right',
-        40: 'down'
+        68: 'right',
+        40: 'down',
+        83: 'down'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
@@ -99,7 +152,6 @@ document.addEventListener('keyup', function (e) {
 /**
  * Enemy and Player instances
  */
-
 let enemy1 = new Enemy(60);
 let enemy2 = new Enemy(144);
 let enemy3 = new Enemy(226);
