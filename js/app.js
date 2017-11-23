@@ -1,3 +1,5 @@
+/* let score = 0;
+ */
 /**
  * @description Sets all variables necessary to create enemies
  * @param {Number} y
@@ -61,6 +63,7 @@ let Player = function () {
     this.maxX = 400;
     this.minY = 0;
     this.maxY = 400;
+    this.isInWater = false;
     this.sprite = 'images/char-boy.png';
 
     this.getInitialPosition()
@@ -72,6 +75,7 @@ let Player = function () {
 Player.prototype.getInitialPosition = function() {
     this.x = 200;
     this.y = 400;
+    this.isInWater;
 }
 
 /**
@@ -81,6 +85,7 @@ Player.prototype.getInitialPosition = function() {
 Player.prototype.update = function () {
     if (this.y <= -10) {
         this.getInitialPosition();
+        !this.isInWater && game.updateScore();
     }
     this.checkCollisions();
 }
@@ -102,9 +107,12 @@ Player.prototype.checkCollisions = function () {
         let playerOnThirdRow = player.y - 20 === enemy.y;
         let enemyOnPlayer = enemy.x >= player.x - 40 && enemy.x <= player.x + 40;
 
-       (playerOnFirstRow || playerOnSecondRow || playerOnThirdRow)
-           && enemyOnPlayer
-           && this.getInitialPosition();
+        let collision = (playerOnFirstRow || playerOnSecondRow || playerOnThirdRow)
+            && enemyOnPlayer;
+
+        collision && this.getInitialPosition();
+        collision && game.score >= 50 && (game.score -= 50);
+        collision && (game.collisions += 1);
     });
 }
 
@@ -150,8 +158,35 @@ document.addEventListener('keyup', function (e) {
 });
 
 /**
+ * @description Tracks the player's score
+ */
+let Game = function () {
+    this.score = 0;
+    this.collisions = 0;
+}
+
+/**
+ * @description Updates the score when player is in the water
+ */
+Game.prototype.updateScore = function () {
+    !player.isInWater && (this.score += 100);
+
+}
+
+/**
+ * @description Creates the text for game's score on canvas
+ */
+Game.prototype.render = function () {
+    ctx.font = '36px sans-serif';
+    ctx.fillStyle = 'white';
+    ctx.fillText(`Score: ${this.score}`, 20, 563);
+    ctx.textBaseline = 'middle';
+}
+
+/**
  * Enemy and Player instances
  */
+let game = new Game();
 let enemy1 = new Enemy(60);
 let enemy2 = new Enemy(144);
 let enemy3 = new Enemy(226);
