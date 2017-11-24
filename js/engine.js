@@ -153,6 +153,13 @@ var Engine = (function(global) {
             enemy.render();
         });
 
+        /**
+         * Loop through lives objects array
+         */
+        allLives.forEach(function (life) {
+            life.render();
+        });
+
         player.render();
         game.render();
     }
@@ -174,7 +181,13 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/Heart.png',
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+        'images/Star.png',
+        'images/Key.png'
     ]);
     Resources.onReady(init);
 

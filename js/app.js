@@ -1,5 +1,3 @@
-/* let score = 0;
- */
 /**
  * @description Sets all variables necessary to create enemies
  * @param {Number} y
@@ -113,6 +111,12 @@ Player.prototype.checkCollisions = function () {
         collision && this.getInitialPosition();
         collision && game.score >= 50 && (game.score -= 50);
         collision && (game.collisions += 1);
+
+        if (game.collisions === 3) {
+            allLives.splice(0, 1);
+            game.collisions = 0;
+        }
+        collision && allLives.length === 0 && game.over();
     });
 }
 
@@ -125,13 +129,13 @@ Player.prototype.handleInput = function (allowedKeys) {
         case 'left':
             this.x <= 10 ? this.x = 0 : this.x -= 100;
             break;
-        case 'up':
+            case 'up':
             this.y <= 50 ? this.y = -10 : this.y -= 80;
             break;
         case 'right':
             this.x >= 400 ? this.x = 400 : this.x += 100;
             break;
-        case 'down':
+            case 'down':
             this.y >= 400 ? this.y = 400 : this.y += 80;
             break;
     }
@@ -170,7 +174,6 @@ let Game = function () {
  */
 Game.prototype.updateScore = function () {
     !player.isInWater && (this.score += 100);
-
 }
 
 /**
@@ -183,6 +186,22 @@ Game.prototype.render = function () {
     ctx.textBaseline = 'middle';
 }
 
+Game.prototype.over = function () {
+    console.log('game over!!!');
+}
+
+let Lives = function (x) {
+    this.sprite = 'images/Heart.png';
+    this.x = x;
+    this.y = 530;
+    this.width = 40;
+    this.height = 60;
+}
+
+Lives.prototype.render = function () {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
+}
+
 /**
  * Enemy and Player instances
  */
@@ -192,3 +211,7 @@ let enemy2 = new Enemy(144);
 let enemy3 = new Enemy(226);
 let allEnemies = [enemy1, enemy2, enemy3];
 let player = new Player();
+let life1 = new Lives(370);
+let life2 = new Lives(410);
+let life3 = new Lives(450);
+let allLives = [life1, life2, life3];
