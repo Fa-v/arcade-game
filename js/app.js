@@ -202,6 +202,80 @@ Lives.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
 }
 
+let Gem = function () {
+    this.x;
+    this.y;
+    this.width = 60;
+    this.height = 80;
+    this.gemImages = [
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+        'images/Star.png',
+        'images/Key.png'
+    ];
+    this.gemValues = [100, 150, 200, 300, 350];
+    this.randomGem;
+    this.sprite;
+
+    this.getRandomGem();
+}
+
+Gem.prototype.getRandomGem = function () {
+    let randomX,
+        randomY,
+        possibleX = [20, 120, 220, 320, 420],
+        possibleY = [120, 200, 280];
+
+    this.randomGem = Math.floor(Math.random() * this.gemImages.length);
+    randomX = Math.floor(Math.random() * possibleX.length);
+    randomY = Math.floor(Math.random() * possibleY.length);
+
+    this.x = possibleX[randomX];
+    this.y = possibleY[randomY];
+    this.gemValues = this.gemValues[this.randomGem];
+    this.sprite = this.gemImages[this.randomGem];
+}
+
+Gem.generateGem = function () {
+    let gem = new Gem();
+
+    allGems.push(gem);
+    Gem.getGems();
+}
+
+Gem.getGems = function () {
+    let delay = Math.floor(Math.random() * (10000 - 6000) + 6000);
+
+    setTimeout(Gem.removeGem, 6000);
+    setTimeout(Gem.generateGem, delay);
+}
+
+Gem.removeGem = function () {
+    allGems.splice(0, 1);
+}
+
+Gem.clearTimeOuts = function () {
+    clearTimeout(Gem.generateGem);
+    clearTimeout(Gem.removeGem);
+}
+
+Gem.prototype.render = function () {
+    game.score >= 300 &&
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
+}
+
+Gem.prototype.update = function () {
+    let gemPicked = (allGems.length && player.y + 40 === allGems[0].y) &&
+    (allGems.length && player.x + 20 === allGems[0].x);
+
+    /* the if statement prevents to increase the score before the gem shows up on the screen */
+    if (gemPicked) {
+        (game.score < 300) ? game.score = game.score : (game.score += this.gemValues);
+        allGems.splice(0, 1);
+    }
+}
+
 /**
  * Enemy and Player instances
  */
@@ -215,3 +289,5 @@ let life1 = new Lives(370);
 let life2 = new Lives(410);
 let life3 = new Lives(450);
 let allLives = [life1, life2, life3];
+let allGems = [];
+Gem.generateGem();
