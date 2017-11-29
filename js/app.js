@@ -25,10 +25,20 @@ Enemy.prototype.getInitialPosition = function () {
 /**
  * @description Calculates and returns a random speed
  */
-Enemy.prototype.calculateSpeed = function () {
-    let randomSpeed = Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed;
+Enemy.prototype.calculateSpeed = function (minSpeed, maxSpeed) {
+    let randomSpeed;
 
-    Math.floor(randomSpeed);
+    if (game.score >= 1000) {
+        this.minSpeed = 150;
+        this.maxSpeed = 350;
+    }
+    if (game.score >= 1500) {
+        this.minSpeed = 200;
+        this.maxSpeed = 500;
+    }
+
+    randomSpeed = Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed;
+    randomSpeed = Math.floor(randomSpeed);
     randomSpeed < 100 ? randomSpeed = 100 : randomSpeed;
     return this.speed = randomSpeed;
 }
@@ -261,8 +271,12 @@ Gem.clearTimeOuts = function () {
 }
 
 Gem.prototype.render = function () {
-    game.score >= 300 &&
+    if (game.score >= 300) {
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillStyle = 'grey';
+        ctx.fillText(`${this.gemValues}`, this.x + 12, this.y + 90);
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
+    }
 }
 
 Gem.prototype.update = function () {
@@ -291,3 +305,4 @@ let life3 = new Lives(450);
 let allLives = [life1, life2, life3];
 let allGems = [];
 Gem.generateGem();
+Gem.clearTimeOuts();
