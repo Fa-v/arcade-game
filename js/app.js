@@ -126,7 +126,7 @@ Player.prototype.checkCollisions = function () {
             allLives.splice(0, 1);
             game.collisions = 0;
         }
-        collision && allLives.length === 0 && game.over();
+        collision && allLives.length === 0 && (game.isOver = true) && game.over();
     });
 }
 
@@ -176,7 +176,9 @@ document.addEventListener('keyup', function (e) {
  */
 let Game = function () {
     this.score = 0;
+    this.higherScore = 0;
     this.collisions = 0;
+    this.isOver = false;
 }
 
 /**
@@ -187,6 +189,33 @@ Game.prototype.updateScore = function () {
 }
 
 /**
+ * @description Sets when the game is over and calls setHistoryGame and sortScore
+ * functions
+ */
+Game.prototype.over = function () {
+    this.isOver === true && gameRecords.push(this.score);
+    this.setHistoryGame();
+    this.sortScore();
+}
+
+/**
+ * @description Sorts game records and returns the higher score
+ */
+Game.prototype.sortScore = function () {
+    gameRecords.length && gameRecords.sort(function (a, b) {
+        return (b - a);
+    });
+    this.higherScore += gameRecords[0]
+}
+
+/**
+ * @description Sets game score in local storage
+ */
+Game.prototype.setHistoryGame = function () {
+    localStorage.setItem('record', JSON.stringify(gameRecords));
+}
+
+/**
  * @description Creates the text for game's score on canvas
  */
 Game.prototype.render = function () {
@@ -194,10 +223,16 @@ Game.prototype.render = function () {
     ctx.fillStyle = 'white';
     ctx.fillText(`Score: ${this.score}`, 20, 563);
     ctx.textBaseline = 'middle';
-}
 
-Game.prototype.over = function () {
-    console.log('game over!!!');
+    if (this.isOver === true) {
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(0, 125, 505, 260);
+        ctx.font = 'bold 30px sans-serif';
+        ctx.fillStyle = 'black';
+        ctx.fillText(`Game Over!`, 100, 220);
+        ctx.fillText(`Score: ${this.score}`, 100, 260);
+        ctx.fillText(`Higher Score: ${this.higherScore}`, 100, 300);
+    }
 }
 
 let Lives = function (x) {
@@ -293,6 +328,7 @@ Gem.prototype.update = function () {
 /**
  * Enemy and Player instances
  */
+let gameRecords = JSON.parse(localStorage.getItem('record')) || [];
 let game = new Game();
 let enemy1 = new Enemy(60);
 let enemy2 = new Enemy(144);
