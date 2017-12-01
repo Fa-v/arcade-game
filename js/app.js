@@ -182,10 +182,16 @@ let Game = function () {
 }
 
 /**
- * @description Updates the score when player is in the water
+ * @description Updates the score when player is in the water and sets when the game
+ * is won
  */
 Game.prototype.updateScore = function () {
     !player.isInWater && (this.score += 100);
+
+    if (!player.isInWater && this.score >= 2000 && allLives.length > 0) {
+        this.playerWon = true;
+        this.won();
+    }
 }
 
 /**
@@ -196,6 +202,18 @@ Game.prototype.over = function () {
     this.isOver === true && gameRecords.push(this.score);
     this.setHistoryGame();
     this.sortScore();
+}
+
+/**
+ * @description When player wins, push game score to  gameRecord and calls
+ * setHistoryGame and sortScore functions
+ */
+Game.prototype.won = function () {
+    this.playerWon === true && gameRecords.push(this.score);
+    this.setHistoryGame();
+    this.sortScore();
+
+    this.gameFinished = true;
 }
 
 /**
@@ -230,6 +248,16 @@ Game.prototype.render = function () {
         ctx.font = 'bold 30px sans-serif';
         ctx.fillStyle = 'black';
         ctx.fillText(`Game Over!`, 100, 220);
+        ctx.fillText(`Score: ${this.score}`, 100, 260);
+        ctx.fillText(`Higher Score: ${this.higherScore}`, 100, 300);
+    }
+
+    if (this.gameFinished === true) {
+        ctx.fillStyle = '#f02d3a';
+        ctx.fillRect(0, 125, 505, 260);
+        ctx.font = 'bold 30px sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(`You Won!`, 100, 220);
         ctx.fillText(`Score: ${this.score}`, 100, 260);
         ctx.fillText(`Higher Score: ${this.higherScore}`, 100, 300);
     }
