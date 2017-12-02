@@ -199,7 +199,11 @@ Game.prototype.updateScore = function () {
  * functions
  */
 Game.prototype.over = function () {
+    let button = document.getElementById('button');
+
+    button.style.visibility = 'visible';
     this.isOver === true && gameRecords.push(this.score);
+
     this.setHistoryGame();
     this.sortScore();
 }
@@ -209,6 +213,10 @@ Game.prototype.over = function () {
  * setHistoryGame and sortScore functions
  */
 Game.prototype.won = function () {
+    let button = document.getElementById('button');
+
+    button.style.visibility = 'visible';
+
     this.playerWon === true && gameRecords.push(this.score);
     this.setHistoryGame();
     this.sortScore();
@@ -234,6 +242,23 @@ Game.prototype.setHistoryGame = function () {
 }
 
 /**
+ * @description Resets all values for a new game
+ */
+Game.prototype.resetGame = function () {
+    game = new Game();
+    enemy1 = new Enemy(60);
+    enemy2 = new Enemy(144);
+    enemy3 = new Enemy(226);
+    allEnemies = [enemy1, enemy2, enemy3];
+    player.getInitialPosition();
+
+    life1 = new Lives(370);
+    life2 = new Lives(410);
+    life3 = new Lives(450);
+    allLives = [life1, life2, life3];
+}
+
+/**
  * @description Creates the text for game's score on canvas
  */
 Game.prototype.render = function () {
@@ -243,7 +268,7 @@ Game.prototype.render = function () {
     ctx.textBaseline = 'middle';
 
     if (this.isOver === true) {
-        ctx.fillStyle = 'yellow';
+        ctx.fillStyle = '#eec643';
         ctx.fillRect(0, 125, 505, 260);
         ctx.font = 'bold 30px sans-serif';
         ctx.fillStyle = 'black';
@@ -369,4 +394,3 @@ let life3 = new Lives(450);
 let allLives = [life1, life2, life3];
 let allGems = [];
 Gem.generateGem();
-Gem.clearTimeOuts();

@@ -178,7 +178,11 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        document.getElementById('button').addEventListener('click', function (event) {
+            event.preventDefault();
+            game.resetGame();
+        });
+        Gem.clearTimeOuts();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
