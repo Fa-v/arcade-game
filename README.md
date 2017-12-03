@@ -23,7 +23,7 @@ cd arcade-game/
 ```
 Then open the index html in your browser.
 
-You can also follow this link to play it.
+You can also follow this [link]( https://fa-v.github.io/arcade-game/) to play it.
 
 ### How to play it.
 Use the following keys to move the player:
